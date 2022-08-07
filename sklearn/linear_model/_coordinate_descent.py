@@ -2410,6 +2410,13 @@ class MultiTaskElasticNet(Lasso):
     [0.0872422 0.0872422]
     """
 
+    _parameter_constraints = {
+        **Lasso._parameter_constraints,
+        "l1_ratio": [Interval(Real, 0, 1, closed="both")],
+    }
+    _parameter_constraints.pop('positive')
+    _parameter_constraints.pop('precompute')
+
     def __init__(
         self,
         alpha=1.0,
@@ -2459,6 +2466,8 @@ class MultiTaskElasticNet(Lasso):
         To avoid memory re-allocation it is advised to allocate the
         initial data in memory directly using that format.
         """
+        self._validate_params()
+        
         _normalize = _deprecate_normalize(
             self.normalize, default=False, estimator_name=self.__class__.__name__
         )
